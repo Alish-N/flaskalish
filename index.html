@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ISP Network Issue Predictor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .prediction-form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .result-section {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+        .risk-bars label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .progress {
+            height: 25px;
+            margin-bottom: 15px;
+        }
+        .progress-bar {
+            line-height: 25px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .card {
+            border: none;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        .h3 {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center mb-4">ISP Network Issue Predictor</h2>
+        
+        <div class="row">
+            <div class="col-md-8 mx-auto prediction-form">
+                <form id="predictionForm">
+                    <div class="row">
+                        <!-- Network Performance Metrics -->
+                        <h4>Network Performance Metrics</h4>
+                        <div class="col-md-4 mb-3">
+                            <label for="download_speed" class="form-label">Download Speed (Mbps)</label>
+                            <input type="number" class="form-control" id="download_speed" name="download_speed" required value="100">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="upload_speed" class="form-label">Upload Speed (Mbps)</label>
+                            <input type="number" class="form-control" id="upload_speed" name="upload_speed" required value="50">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="latency" class="form-label">Latency (ms)</label>
+                            <input type="number" class="form-control" id="latency" name="latency" required value="20">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="connection_type" class="form-label">Connection Type</label>
+                            <select class="form-select" id="connection_type" name="connection_type" required>
+                                <option value="DSL">DSL</option>
+                                <option value="Fiber">Fiber</option>
+                                <option value="Cable">Cable</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Usage Patterns -->
+                        <h4>Usage Patterns</h4>
+                        <div class="col-md-4 mb-3">
+                            <label for="data_usage" class="form-label">Data Usage (GB)</label>
+                            <input type="number" class="form-control" id="data_usage" name="data_usage" required value="500">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="peak_hours_usage" class="form-label">Peak Hours Usage (%)</label>
+                            <input type="number" class="form-control" id="peak_hours_usage" name="peak_hours_usage" required value="60">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="streaming_usage" class="form-label">Streaming Usage (%)</label>
+                            <input type="number" class="form-control" id="streaming_usage" name="streaming_usage" required value="40">
+                        </div>
+
+                        <!-- Network Quality -->
+                        <h4>Network Quality</h4>
+                        <div class="col-md-4 mb-3">
+                            <label for="packet_loss" class="form-label">Packet Loss (%)</label>
+                            <input type="number" step="0.1" class="form-control" id="packet_loss" name="packet_loss" required value="0.5">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="jitter" class="form-label">Jitter (ms)</label>
+                            <input type="number" class="form-control" id="jitter" name="jitter" required value="5">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="throughput" class="form-label">Throughput (Mbps)</label>
+                            <input type="number" class="form-control" id="throughput" name="throughput" required value="80">
+                        </div>
+
+                        <!-- Infrastructure -->
+                        <h4>Infrastructure</h4>
+                        <div class="col-md-4 mb-3">
+                            <label for="distance_to_node" class="form-label">Distance to Node (km)</label>
+                            <input type="number" step="0.1" class="form-control" id="distance_to_node" name="distance_to_node" required value="2">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="node_capacity" class="form-label">Node Capacity (Mbps)</label>
+                            <input type="number" class="form-control" id="node_capacity" name="node_capacity" required value="1000">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="fiber_quality" class="form-label">Fiber Quality (%)</label>
+                            <input type="number" class="form-control" id="fiber_quality" name="fiber_quality" required value="90">
+                        </div>
+
+                        <!-- Environmental Factors -->
+                        <h4>Environmental Factors</h4>
+                        <div class="col-md-4 mb-3">
+                            <label for="temperature" class="form-label">Temperature (°C)</label>
+                            <input type="number" class="form-control" id="temperature" name="temperature" required value="25">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="humidity" class="form-label">Humidity (%)</label>
+                            <input type="number" class="form-control" id="humidity" name="humidity" required value="60">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="weather_condition" class="form-label">Weather Condition</label>
+                            <select class="form-select" id="weather_condition" name="weather_condition" required>
+                                <option value="Clear">Clear</option>
+                                <option value="Rain">Rain</option>
+                                <option value="Storm">Storm</option>
+                            </select>
+                        </div>
+
+                        <!-- Service Quality -->
+                        <h4>Service Quality</h4>
+                        <div class="col-md-4 mb-3">
+                            <label for="downtime_minutes" class="form-label">Downtime (minutes)</label>
+                            <input type="number" class="form-control" id="downtime_minutes" name="downtime_minutes" required value="30">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="packet_retransmission" class="form-label">Packet Retransmission (%)</label>
+                            <input type="number" step="0.1" class="form-control" id="packet_retransmission" name="packet_retransmission" required value="1">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="dns_latency" class="form-label">DNS Latency (ms)</label>
+                            <input type="number" class="form-control" id="dns_latency" name="dns_latency" required value="10">
+                        </div>
+
+                        <!-- Customer Info -->
+                        <h4>Customer Information</h4>
+                        <div class="col-md-4 mb-3">
+                            <label for="connection_stability" class="form-label">Connection Stability (%)</label>
+                            <input type="number" class="form-control" id="connection_stability" name="connection_stability" required value="95">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="customer_tenure" class="form-label">Customer Tenure (months)</label>
+                            <input type="number" class="form-control" id="customer_tenure" name="customer_tenure" required value="24">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="payment_history" class="form-label">Payment History Score</label>
+                            <input type="number" class="form-control" id="payment_history" name="payment_history" required value="95">
+                        </div>
+
+                        <!-- Plan Info -->
+                        <div class="col-md-6 mb-3">
+                            <label for="plan" class="form-label">Plan Type</label>
+                            <select class="form-select" id="plan" name="plan" required>
+                                <option value="Basic">Basic</option>
+                                <option value="Standard" selected>Standard</option>
+                                <option value="Premium">Premium</option>
+                                <option value="Enterprise">Enterprise</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="monthly_revenue" class="form-label">Monthly Revenue</label>
+                            <input type="number" class="form-control" id="monthly_revenue" name="monthly_revenue" required value="80">
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-primary">Predict Network Issues</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-8 mx-auto">
+                <div id="resultSection" class="result-section">
+                    <h4 class="mb-4">Prediction Result</h4>
+                    <div id="predictionResult" class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h5 class="card-title mb-4">Risk Assessment</h5>
+                                    <div id="riskLevel" class="h3 mb-4"></div>
+                                    <div id="confidence" class="text-muted"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5 class="card-title mb-4">Risk Probabilities</h5>
+                                    <div class="risk-bars">
+                                        <div class="mb-3">
+                                            <label>Low Risk</label>
+                                            <div class="progress">
+                                                <div id="lowRiskBar" class="progress-bar bg-success" role="progressbar"></div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>Medium Risk</label>
+                                            <div class="progress">
+                                                <div id="mediumRiskBar" class="progress-bar bg-warning" role="progressbar"></div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label>High Risk</label>
+                                            <div class="progress">
+                                                <div id="highRiskBar" class="progress-bar bg-danger" role="progressbar"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('predictionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Collect form data
+            const formData = new FormData(e.target);
+            const rawData = Object.fromEntries(formData);
+            
+            // Create the data object with correct field names
+            const data = {
+                "service_plan": rawData.plan,
+                "connection_type": "DSL", // You might want to add this as a form field
+                "monthly_charges": parseFloat(rawData.monthly_revenue),
+                "bandwidth_mb": parseFloat(rawData.download_speed),
+                "avg_monthly_gb_usage": parseFloat(rawData.data_usage),
+                "customer_rating": Math.min(5, Math.max(1, Math.round(parseFloat(rawData.connection_stability) / 20))), // Convert to 1-5 scale
+                "support_tickets_opened": Math.round(parseFloat(rawData.downtime_minutes) / 10) // Convert to reasonable number
+            };
+
+            try {
+                const response = await fetch('http://localhost:5000/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    const resultSection = document.getElementById('resultSection');
+                    
+                    // Update risk level
+                    const riskLevel = document.getElementById('riskLevel');
+                    const riskText = result.churn_risk === '0' ? 'Low Risk' : 
+                                    result.churn_risk === '1' ? 'Medium Risk' : 'High Risk';
+                    const riskColor = result.churn_risk === '0' ? 'text-success' : 
+                                     result.churn_risk === '1' ? 'text-warning' : 'text-danger';
+                    riskLevel.innerHTML = `<span class="${riskColor}">${riskText}</span>`;
+                    
+                    // Update confidence
+                    document.getElementById('confidence').textContent = 
+                        `Confidence: ${(result.confidence * 100).toFixed(2)}%`;
+                    
+                    // Update probability bars
+                    document.getElementById('lowRiskBar').style.width = 
+                        `${(result.probability.Low * 100).toFixed(2)}%`;
+                    document.getElementById('lowRiskBar').textContent = 
+                        `${(result.probability.Low * 100).toFixed(2)}%`;
+                        
+                    document.getElementById('mediumRiskBar').style.width = 
+                        `${(result.probability.Medium * 100).toFixed(2)}%`;
+                    document.getElementById('mediumRiskBar').textContent = 
+                        `${(result.probability.Medium * 100).toFixed(2)}%`;
+                        
+                    document.getElementById('highRiskBar').style.width = 
+                        `${(result.probability.High * 100).toFixed(2)}%`;
+                    document.getElementById('highRiskBar').textContent = 
+                        `${(result.probability.High * 100).toFixed(2)}%`;
+                    
+                    resultSection.style.display = 'block';
+                } else {
+                    const error = await response.json();
+                    alert(`Error: ${error.error || 'Unknown error occurred'}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error making prediction. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>
